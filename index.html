@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Updates</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body style="background-image: url(./images/wp9124537-dark-clouds-4k-wallpapers.jpg); background-size: cover; background-position: center;">
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="row w-100">
+            <div class="col-lg-6 col-md-8 col-sm-10 mx-auto">
+                <h1 class="text-warning text-center mb-4">WEATHER UPDATES</h1>
+                <div id="output" class="d-flex flex-column align-items-center">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="userinput" placeholder="SEARCH BY CITY NAME">
+                        <button class="btn btn-success" onclick="find()"><i class="fa-solid fa-magnifying-glass fa-bounce"></i></button>
+                    </div>
+                    <div id="weather-output" class="bg-dark p-4 rounded w-100 text-white text-center mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const find = async () => {
+            const userinput = document.getElementById("userinput");
+            const output = document.getElementById("weather-output");
+
+            if (userinput.value !== "") {
+                try {
+                    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${userinput.value}&appid=5b4bee0ba241d092159faf007e166080`);
+                    const result = await response.json();
+
+                    if (result.cod === "404") {
+                        output.innerHTML = `<h3 class="text-danger">${result.message}</h3>`;
+                        output.style.display = "block";
+                    } else {
+                        const weatherDetails = {
+                            country: result.sys.country,
+                            humidity: result.main.humidity,
+                            wind: result.wind.speed,
+                            pressure: result.main.pressure
+                        };
+
+                        output.innerHTML = `
+                            <h3 style="margin-top: 20px;">Weather Details</h3>
+                            <ul class="list-unstyled">
+                                <li class="text-secondary" style="font-size: large;">Country: ${weatherDetails.country}</li>
+                                <li class="text-secondary" style="font-size: large; margin-top: 10px;">Humidity: ${weatherDetails.humidity}%</li>
+                                <li class="text-secondary" style="font-size: large; margin-top: 10px;">Wind: ${weatherDetails.wind} m/s</li>
+                                <li class="text-secondary" style="font-size: large; margin-top: 10px;">Pressure: ${weatherDetails.pressure} hPa</li>
+
+
+                            
+                                
+                            </ul>`;
+                        output.style.display = "block";
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("API call failed. Please try again later.");
+                }
+            } else {
+                output.innerHTML = `<h3 class="text-danger">ENTER A VALID CITY NAME</h3>`;
+                output.style.display = "block";
+            }
+        };
+    </script>
+</body>
+
+</html>
